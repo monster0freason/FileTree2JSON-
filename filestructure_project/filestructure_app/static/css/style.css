@@ -1,0 +1,89 @@
+/* static/css/style.css */
+/* Custom styles beyond Bootstrap */
+
+.folder-structure {
+    font-family: monospace;
+}
+
+.tree-item {
+    display: flex;
+    align-items: center;
+    padding: 3px 0;
+}
+
+.nested {
+    margin-left: 20px;
+    border-left: 1px dashed #ddd;
+    padding-left: 10px;
+}
+
+.json-preview {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    background-color: #272822;
+    color: #f8f8f2;
+    padding: 15px;
+    border-radius: 8px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* Tree structure styling */
+.tree-folder {
+    color: #4361ee;
+    font-weight: 600;
+}
+
+.tree-file {
+    color: #495057;
+}
+
+.tree-item input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.tree-item label {
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+/* Button enhancements */
+.copy-btn, .download-btn {
+    transition: transform 0.2s ease-in-out;
+}
+
+.copy-btn:hover, .download-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Custom checkbox alignment */
+.form-check-input {
+    position: relative;
+    margin-top: 0;
+}
+
+/* Syntax highlighting for JSON preview */
+.json-preview .key { color: #f92672; }
+.json-preview .string { color: #a6e22e; }
+.json-preview .number { color: #ae81ff; }
+.json-preview .boolean { color: #fd971f; }
+.json-preview .null { color: #f44747; }
+
+/* Scrollbar styling for JSON preview */
+.json-preview::-webkit-scrollbar {
+    width: 8px;
+}
+
+.json-preview::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+
+.json-preview::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.json-preview::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
