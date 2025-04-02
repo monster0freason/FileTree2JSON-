@@ -31,7 +31,7 @@ A powerful Django web application that converts file structures into JSON format
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/filetree2json.git
+git clone https://github.com/monster0freason/filetree2json.git
 cd filetree2json
 ```
 
