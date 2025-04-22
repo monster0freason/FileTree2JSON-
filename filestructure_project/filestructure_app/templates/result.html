@@ -17,7 +17,7 @@
                             <i class="fas fa-download me-2"></i> Download
                         </button>
                     </div>
-                    <div class="json-preview" id="json-content">{{ json_data|safe }}</div>
+                    <div class="json-preview" id="json-content">{{ json_data|escape }}</div>
                 </div>
             </div>
             <div class="text-center mb-4">
@@ -63,6 +63,15 @@
 {% endblock %}
 
 {% block extra_js %}
+{% comment %} 
+This is a sample file structure that will be rendered in the HTML.
+[✓] 📁 Project
+    ├── [✓] 📄 README.md
+    └── [✓] 📁 src
+          └── [✓] 📄 main.py 
+          
+{% endcomment %}
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         if (!document.getElementById('json-content')) {
@@ -148,163 +157,3 @@
     }
 </script>
 {% endblock %}
-
-
-
-{% comment %} {% extends 'base.html' %}
-{% block content %}
-<div class="row">
-    {% if json_data %}
-        <div class="col-12">
-            <div class="card mb-4">
-                <div class="card-header bg-white">
-                    <h4 class="mb-0">Generated JSON</h4>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <button class="btn btn-primary copy-btn" onclick="copyToClipboard(document.getElementById('json-content').textContent)">
-                            <i class="fas fa-copy me-2"></i> Copy
-                        </button>
-                        <button class="btn btn-success download-btn" onclick="downloadFile(document.getElementById('json-content').textContent, 'file_structure.json')">
-                            <i class="fas fa-download me-2"></i> Download
-                        </button>
-                    </div>
-                    <div class="json-preview" id="json-content">{{ json_data|safe }}</div>
-                </div>
-            </div>
-            <div class="text-center mb-4">
-                <a href="{% url 'home' %}" class="btn btn-outline-primary">
-                    <i class="fas fa-home me-2"></i> Back to Home
-                </a>
-            </div>
-        </div>
-    {% else %}
-        <div class="col-12">
-            <div class="card mb-4">
-                <div class="card-header bg-white">
-                    <h4 class="mb-0">File Structure</h4>
-                    <p class="text-muted mb-0">Select files and folders to include in the JSON output</p>
-                </div>
-                <div class="card-body">
-                    <form action="{% url 'result' session_id=session_id %}" method="post" id="structure-form">
-                        {% csrf_token %}
-                        <div class="folder-structure">
-                            <div class="mb-3">
-                                <button type="button" class="btn btn-sm btn-outline-primary me-2" onclick="selectAll()">
-                                    <i class="fas fa-check-square me-1"></i> Select All
-                                </button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deselectAll()">
-                                    <i class="fas fa-square me-1"></i> Deselect All
-                                </button>
-                            </div>
-                            <div id="file-tree">
-                                {{ structure|safe }}
-                            </div>
-                        </div>
-                        <div class="text-center mt-4">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-code me-2"></i> Generate JSON
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    {% endif %}
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    
-        // Create the file tree structure
-        document.addEventListener('DOMContentLoaded', function() {
-            if (!document.getElementById('json-content')) {
-                const fileTree = document.getElementById('file-tree');
-                const structureData = {{ structure|safe|default:'{}' }};
-                
-                // Clear existing content
-                fileTree.innerHTML = '';
-                
-                // Render the tree
-                const treeContent = renderTree(structureData);
-                fileTree.appendChild(treeContent);
-            }
-        });
-        
-        function renderTree(node, level = 0) {
-            const container = document.createElement('div');
-            
-            if (node.name) {
-                const item = document.createElement('div');
-                item.className = 'tree-item';
-                
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.name = 'selected_paths';
-                checkbox.value = node.path;
-                checkbox.className = 'form-check-input me-2';
-                checkbox.id = `path-${node.path.replace(/[^a-z0-9]/gi, '-')}`;
-                
-                if (node.type === 'directory') {
-                    checkbox.dataset.folder = true;
-                    checkbox.addEventListener('change', function() {
-                        // Toggle all children checkboxes
-                        const isChecked = this.checked;
-                        const childContainer = item.nextElementSibling;
-                        if (childContainer && childContainer.classList.contains('nested')) {
-                            const childCheckboxes = childContainer.querySelectorAll('input[type="checkbox"]');
-                            childCheckboxes.forEach(function(cb) {
-                                cb.checked = isChecked;
-                            });
-                        }
-                    });
-                }
-                
-                const label = document.createElement('label');
-                label.setAttribute('for', checkbox.id);
-                label.className = node.type === 'directory' ? 'tree-folder' : 'tree-file';
-                
-                const icon = document.createElement('i');
-                icon.className = node.type === 'directory' ? 'fas fa-folder me-2' : 'fas fa-file me-2';
-                
-                label.appendChild(icon);
-                label.appendChild(document.createTextNode(node.name));
-                
-                item.appendChild(checkbox);
-                item.appendChild(label);
-                container.appendChild(item);
-                
-                if (node.children && node.children.length > 0) {
-                    const childContainer = document.createElement('div');
-                    childContainer.className = 'nested';
-                    
-                    node.children.forEach(function(child) {
-                        childContainer.appendChild(renderTree(child, level + 1));
-                    });
-                    
-                    container.appendChild(childContainer);
-                }
-            }
-            
-            return container;
-        }
-   
-    
-    // Function to select all checkboxes
-    function selectAll() {
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(function(checkbox) {
-            checkbox.checked = true;
-        });
-    }
-    
-    // Function to deselect all checkboxes
-    function deselectAll() {
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(function(checkbox) {
-            checkbox.checked = false;
-        });
-    }
-</script>
-{% endblock %} {% endcomment %}
