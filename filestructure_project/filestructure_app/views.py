@@ -24,7 +24,15 @@ def process_files(request):
             
             # Check if a file was uploaded
             if 'folder' in request.FILES:
-                folder_path = processor.save_temp_file(request.FILES['folder'])
+                uploaded_file = request.FILES['folder']
+                
+                # Only accept zip files
+                if not uploaded_file.name.endswith('.zip'):
+                    messages.error(request, "Only .zip files are supported. Please upload a zip archive.")
+                    return redirect('home')
+                
+                folder_path = processor.save_temp_file(uploaded_file)
+
             
             # Check if a GitHub URL was provided
             elif 'github_url' in request.POST and request.POST['github_url']:
